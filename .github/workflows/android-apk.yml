@@ -1,0 +1,40 @@
+name: Build Saya Munshi Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: دریافت سورس پروژه
+        uses: actions/checkout@v4
+
+      - name: نصب Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: ساخت فایل‌های Android
+        run: flutter create --platforms=android --org com.saya .
+
+      - name: اضافه‌کردن دسترسی‌های Android
+        run: python3 tool/patch_android.py
+
+      - name: دریافت وابستگی‌ها
+        run: flutter pub get
+
+      - name: بررسی کد
+        run: flutter analyze
+
+      - name: ساخت APK آزمایشی
+        run: flutter build apk --debug
+
+      - name: ارائه APK برای دانلود
+        uses: actions/upload-artifact@v4
+        with:
+          name: saya-munshi-android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
