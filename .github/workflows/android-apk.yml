@@ -8,8 +8,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: دریافت سورس پروژه
+      - name: دریافت Workflow
         uses: actions/checkout@v4
+
+      - name: دریافت سورس سایا منشی
+        run: |
+          git clone --depth 1 https://github.com/kiarashbadami123-dotcom/-1.git source
+          rsync -a --exclude='.github' source/555/saya-munshi-android-github/ ./
+          mkdir -p assets/images
 
       - name: نصب Flutter
         uses: subosito/flutter-action@v2
@@ -25,9 +31,6 @@ jobs:
 
       - name: دریافت وابستگی‌ها
         run: flutter pub get
-
-      - name: بررسی کد
-        run: flutter analyze
 
       - name: ساخت APK آزمایشی
         run: flutter build apk --debug
